@@ -56,6 +56,14 @@ export const afterDraw = [
   'O algoritmo foi justo. Voce que teve azar.',
 ];
 
+export const afterRanking = [
+  '🏁 Classificacao completa, do primeiro ao ultimo.',
+  'A ordem oficial saiu. Sem recurso.',
+  'Esta definido: cada um no seu lugar.',
+  'Do primeiro colocado ao ultimo, o sorteio decidiu.',
+  'Pronto. A fila esta montada.',
+];
+
 export const emptyState = [
   '👀 Ei... primeiro precisamos de alguem para sortear.',
   'A lista esta vazia. Ate o destino precisa de nomes.',

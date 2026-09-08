@@ -11,6 +11,7 @@ export const STORAGE_KEYS = {
 
 export const DEFAULT_SETTINGS = {
   sound: true,
+  format: 'single', // single (um vencedor) | ranking (classificacao completa)
   duration: 'normal', // rapido | normal | epico
   suspense: true,
   confetti: true,
