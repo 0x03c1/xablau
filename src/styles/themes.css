@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Temas visuais. Para criar um novo tema:
+   1. adicione o id em src/data/themes.js
+   2. copie um bloco abaixo e ajuste as cores
+   ========================================================================== */
+
+[data-theme='terminal'] {
+  --bg: #04120b;
+  --bg-deep: #010805;
+  --panel: #08200f;
+  --line: rgba(125, 255, 155, 0.18);
+  --ink: #dcffe6;
+  --muted: #6fae86;
+  --accent: #1cf0c8;
+  --accent-2: #7dff9b;
+  --gold: #d8ff5c;
+}
+
+[data-theme='sunset'] {
+  --bg: #20103a;
+  --bg-deep: #120823;
+  --panel: #2b1547;
+  --line: rgba(255, 200, 120, 0.18);
+  --ink: #fff2e2;
+  --muted: #c8a2b6;
+  --accent: #ff4d6d;
+  --accent-2: #ffb020;
+  --gold: #ffe066;
+}
+
+[data-theme='daylight'] {
+  --bg: #f5f2ff;
+  --bg-deep: #e8e3fb;
+  --panel: #ffffff;
+  --panel-soft: rgba(59, 31, 209, 0.06);
+  --line: rgba(43, 20, 120, 0.18);
+  --ink: #1b1046;
+  --muted: #5b4b8a;
+  --accent: #e0175f;
+  --accent-2: #3b1fd1;
+  --gold: #b8860b;
+  color-scheme: light;
+}
+
+[data-theme='daylight'] .adder input,
+[data-theme='daylight'] .textarea,
+[data-theme='daylight'] .card,
+[data-theme='daylight'] .mode-card,
+[data-theme='daylight'] .theme-card,
+[data-theme='daylight'] .switch__control,
+[data-theme='daylight'] kbd,
+[data-theme='daylight'] .btn--stop {
+  background: rgba(59, 31, 209, 0.06);
+}
+
+[data-theme='daylight'] .reel__window {
+  background: rgba(27, 16, 70, 0.9);
+}
+
+[data-theme='daylight'] .reel__value,
+[data-theme='daylight'] .reel__idle {
+  color: #fff;
+}
+
+[data-theme='daylight'] .stage {
+  background: linear-gradient(180deg, #ffffff, #f0ecff);
+}
+
+[data-theme='daylight'] .winner__name {
+  color: var(--ink);
+  text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+[data-theme='daylight'] .stage::after {
+  display: none;
+}
+
+[data-theme='daylight'] .btn--solid,
+[data-theme='daylight'] .btn--draw {
+  color: #fff;
+}
+
+[data-theme='daylight'] .switch__control[aria-checked='true'] .switch__thumb {
+  background: #fff;
+}
+
+[data-theme='daylight'] .panel__count,
+[data-theme='daylight'] .deck__mode[data-active='true'] {
+  color: #fff;
+}

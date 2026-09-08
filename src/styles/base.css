@@ -1,0 +1,209 @@
+/* ==========================================================================
+   Tokens e fundacoes
+   Tema padrao: neon arcade. Os demais ficam em themes.css.
+   ========================================================================== */
+
+:root {
+  --bg: #120a26;
+  --bg-deep: #0b0518;
+  --panel: #1b0f3a;
+  --panel-soft: rgba(255, 255, 255, 0.05);
+  --line: rgba(255, 255, 255, 0.12);
+  --ink: #f6edff;
+  --muted: #a493c9;
+  --hot: #ff2d95;
+  --cool: #22e7ff;
+  --lime: #b6ff3c;
+  --gold: #ffc53d;
+  --accent: var(--hot);
+  --accent-2: var(--cool);
+  --stage-ink: var(--ink);
+
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 28px;
+
+  --font-display: 'Bungee', 'Impact', system-ui, sans-serif;
+  --font-ui: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --shadow-deep: 0 30px 70px -30px rgba(0, 0, 0, 0.9);
+  --step: clamp(0.75rem, 1.4vw, 1.25rem);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-deep);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+ol,
+figure,
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+fieldset {
+  border: 0;
+}
+
+code,
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Botoes ---------- */
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: transform 0.12s ease, background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn--icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 1.15rem;
+  border-color: var(--line);
+  background: var(--panel-soft);
+  color: var(--ink);
+}
+
+.btn--icon:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn--solid {
+  padding: 0.7rem 1.2rem;
+  background: var(--accent);
+  color: #12061d;
+  font-weight: 700;
+}
+
+.btn--solid:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn--ghost {
+  padding: 0.6rem 1.1rem;
+  border-color: var(--line);
+  background: var(--panel-soft);
+  color: var(--ink);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+}
+
+.link-btn {
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.link-btn:hover {
+  color: var(--accent);
+}
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.42rem 0.85rem;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: color 0.16s ease, border-color 0.16s ease;
+}
+
+.chip:hover:not(:disabled) {
+  color: var(--ink);
+  border-color: var(--accent-2);
+}
+
+.chip:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.chip--danger:hover:not(:disabled) {
+  color: #ff8095;
+  border-color: #ff8095;
+}
+
+.chip--bright {
+  border-color: var(--gold);
+  color: var(--gold);
+}

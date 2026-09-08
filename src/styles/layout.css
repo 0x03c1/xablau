@@ -1,0 +1,385 @@
+/* ==========================================================================
+   Estrutura: cabecalho, colunas, paineis laterais, avisos
+   ========================================================================== */
+
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(0.75rem, 1.6vw, 1.5rem);
+  background:
+    radial-gradient(120% 90% at 50% -10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+    radial-gradient(90% 70% at 90% 110%, color-mix(in srgb, var(--accent-2) 16%, transparent), transparent 65%),
+    var(--bg);
+}
+
+/* ---------- Cabecalho ---------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brand__dice {
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 60%, transparent));
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--accent) 70%, transparent),
+    0 3px 0 color-mix(in srgb, var(--bg-deep) 80%, transparent);
+}
+
+.brand__name[data-secret='true'] {
+  background: linear-gradient(90deg, var(--hot), var(--gold), var(--lime), var(--cool), var(--hot));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow 4s linear infinite;
+}
+
+.brand__tag {
+  color: var(--muted);
+  font-size: clamp(0.78rem, 1.4vw, 0.95rem);
+}
+
+.topbar__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ---------- Colunas ---------- */
+
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 24rem);
+  gap: clamp(0.85rem, 1.6vw, 1.4rem);
+  align-items: stretch;
+}
+
+.layout__stage {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.4vw, 1.2rem);
+  min-height: 0;
+}
+
+.layout__rail {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+}
+
+/* ---------- Paineis ---------- */
+
+.panel {
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-height: 0;
+  backdrop-filter: blur(8px);
+}
+
+.panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.panel__head h2 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+
+.panel__count {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--bg-deep);
+  background: var(--accent-2);
+  border-radius: 999px;
+  padding: 0.05rem 0.6rem;
+  font-weight: 700;
+}
+
+.adder {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.adder input {
+  flex: 1;
+  min-width: 0;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.28);
+  padding: 0.7rem 1rem;
+  color: var(--ink);
+}
+
+.adder input::placeholder {
+  color: color-mix(in srgb, var(--muted) 75%, transparent);
+}
+
+.adder input:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.panel__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  overflow-y: auto;
+  max-height: min(42vh, 26rem);
+  padding-right: 0.2rem;
+  scrollbar-width: thin;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.6rem 0.5rem 0.55rem;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+  border-left: 3px solid color-mix(in srgb, var(--accent-2) 70%, transparent);
+}
+
+.card[data-drawn='true'] {
+  opacity: 0.45;
+  border-left-color: var(--muted);
+}
+
+.card__mark {
+  width: 1.6rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.card__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.card__badge {
+  font-size: 0.68rem;
+  text-transform: lowercase;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 0.45rem;
+}
+
+.card__remove {
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0 0.25rem;
+  border-radius: 6px;
+}
+
+.card__remove:hover {
+  color: #ff8095;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.5rem 0 0.25rem;
+}
+
+.empty p {
+  font-weight: 600;
+}
+
+.empty__hint {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 400;
+}
+
+/* ---------- Historico ---------- */
+
+.panel--history {
+  flex: 0 0 auto;
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.history__item {
+  display: grid;
+  grid-template-columns: 1.8rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.32rem 0.2rem;
+  border-bottom: 1px dashed color-mix(in srgb, var(--line) 80%, transparent);
+}
+
+.history__item:last-child {
+  border-bottom: 0;
+}
+
+.history__medal {
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.history__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history__time {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* ---------- Aviso flutuante ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: min(92vw, 36rem);
+  padding: 0.75rem 0.75rem 0.75rem 1.1rem;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-deep);
+  animation: toast-in 0.24s ease-out;
+}
+
+.toast[data-tone='warn'] {
+  border-color: var(--gold);
+}
+
+.toast[data-tone='ok'] {
+  border-color: var(--accent-2);
+}
+
+.toast[data-tone='party'] {
+  border-color: var(--accent);
+}
+
+.toast__close {
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+}
+
+@keyframes rainbow {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+/* ---------- Responsividade ---------- */
+
+@media (max-width: 1080px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cards {
+    max-height: 20rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar__actions {
+    margin-left: auto;
+  }
+
+  .adder {
+    flex-wrap: wrap;
+  }
+
+  .adder .btn--solid {
+    width: 100%;
+  }
+}
+
+/* ---------- Tela cheia: so o essencial ---------- */
+
+.app[data-fullscreen='true'] {
+  padding: 0.75rem;
+}
+
+.app[data-fullscreen='true'] .layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.app[data-fullscreen='true'] .layout__rail,
+.app[data-fullscreen='true'] .brand__tag {
+  display: none;
+}
+
+.app[data-fullscreen='true'] .deck__modes {
+  display: none;
+}
