@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Imagem de preview para redes sociais (Open Graph / Twitter Card).
+  1200x630. Para regenerar o PNG:
+    rsvg-convert -w 1200 -h 630 public/og-image.svg -o public/og-image.png
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="bg" cx="28%" cy="22%" r="95%">
+      <stop offset="0" stop-color="#291351" />
+      <stop offset="55%" stop-color="#160b2d" />
+      <stop offset="100%" stop-color="#0a0416" />
+    </radialGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0.2">
+      <stop offset="0" stop-color="#ff2d95" />
+      <stop offset="100%" stop-color="#ff86c6" />
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-60%" width="180%" height="240%">
+      <feGaussianBlur stdDeviation="16" result="b" />
+      <feMerge>
+        <feMergeNode in="b" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="90" cy="70" r="300" fill="#ff2d95" opacity="0.16" />
+  <circle cx="1140" cy="580" r="320" fill="#22e7ff" opacity="0.12" />
+  <rect x="26" y="26" width="1148" height="578" rx="30" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="2" />
+
+  <!-- Marca: quadrado com pontos, ecoando o favicon -->
+  <g transform="translate(96,92)">
+    <rect width="92" height="92" rx="22" fill="#ff2d95" />
+    <circle cx="29" cy="29" r="9.5" fill="#120a26" />
+    <circle cx="63" cy="63" r="9.5" fill="#120a26" />
+    <circle cx="46" cy="46" r="9.5" fill="#120a26" />
+  </g>
+  <text x="212" y="152" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700"
+        font-size="27" letter-spacing="7" fill="#22e7ff">SORTEIO JUSTO NO NAVEGADOR</text>
+
+  <!-- Titulo -->
+  <text x="94" y="338" font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif" font-weight="900"
+        font-size="134" letter-spacing="1" fill="url(#title)" filter="url(#glow)">QUEM SERÁ?</text>
+
+  <!-- Tagline -->
+  <text x="98" y="424" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="500"
+        font-size="39" fill="#ece6ff">O destino da sala acaba de ser decidido.</text>
+
+  <!-- Chips -->
+  <g font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="26" fill="#ece6ff">
+    <g transform="translate(98,486)">
+      <rect width="270" height="58" rx="29" fill="#ffffff" fill-opacity="0.06" stroke="#ff2d95" stroke-opacity="0.55" stroke-width="1.5" />
+      <text x="135" y="38" text-anchor="middle">Vencedor único</text>
+    </g>
+    <g transform="translate(388,486)">
+      <rect width="326" height="58" rx="29" fill="#ffffff" fill-opacity="0.06" stroke="#22e7ff" stroke-opacity="0.55" stroke-width="1.5" />
+      <text x="163" y="38" text-anchor="middle">Classificação completa</text>
+    </g>
+    <g transform="translate(734,486)">
+      <rect width="368" height="58" rx="29" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.22" stroke-width="1.5" />
+      <text x="184" y="37" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, monospace" font-size="22" fill="#cfc6e8">crypto.getRandomValues()</text>
+    </g>
+  </g>
+</svg>
