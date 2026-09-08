@@ -44,6 +44,11 @@ if (js) {
 // favicon externo nao existe no arquivo unico
 html = html.replace(/<link rel="icon"[^>]*>/, () => '');
 
+// Tags de preview social nao fazem sentido num arquivo aberto do disco.
+html = html
+  .replace(/\s*<!--[\s\S]*?-->\s*(?=<link rel="canonical")/, '\n    ')
+  .replace(/\s*<(?:meta|link)[^>]*(?:property="og:|name="twitter:|rel="canonical")[^>]*>/g, '');
+
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, 'quem-sera.html'), html);
 rmSync(tmp, { recursive: true, force: true });
