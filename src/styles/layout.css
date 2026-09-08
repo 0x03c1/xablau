@@ -267,6 +267,30 @@
   border-bottom: 0;
 }
 
+.history__item--ranking {
+  align-items: start;
+}
+
+.history__ranking {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.82rem;
+  min-width: 0;
+}
+
+.history__ranking li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history__ranking b {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  margin-right: 0.35rem;
+}
+
 .history__medal {
   text-align: center;
   font-size: 0.95rem;
@@ -380,6 +404,7 @@
   display: none;
 }
 
-.app[data-fullscreen='true'] .deck__modes {
+.app[data-fullscreen='true'] .deck__modes,
+.app[data-fullscreen='true'] .deck__formats {
   display: none;
 }

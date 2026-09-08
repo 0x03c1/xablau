@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getSecureRandomIndex, pickDifferent, pickRandom } from '../utils/random.js';
+import { getSecureRandomIndex, pickDifferent, pickRandom, secureShuffle } from '../utils/random.js';
 import { DURATIONS } from '../data/defaults.js';
-import { afterDraw, prepare as preparePhrases, shuffling, suspense as suspensePhrases } from '../data/phrases.js';
+import {
+  afterDraw,
+  afterRanking,
+  prepare as preparePhrases,
+  shuffling,
+  suspense as suspensePhrases,
+} from '../data/phrases.js';
 
 export const PHASES = {
   IDLE: 'idle',
@@ -41,6 +47,7 @@ export function useDraw({ settings, calmMotion, audio, onWinner }) {
   const [display, setDisplay] = useState(null);
   const [message, setMessage] = useState('');
   const [winner, setWinner] = useState(null);
+  const [ranking, setRanking] = useState(null);
   const [progress, setProgress] = useState(0);
   const timers = useRef([]);
   const runningRef = useRef(false);
@@ -60,6 +67,7 @@ export function useDraw({ settings, calmMotion, audio, onWinner }) {
     setPhase(PHASES.IDLE);
     setDisplay(null);
     setWinner(null);
+    setRanking(null);
     setMessage('');
     setProgress(0);
   }, [clearTimers]);
@@ -67,7 +75,7 @@ export function useDraw({ settings, calmMotion, audio, onWinner }) {
   useEffect(() => () => clearTimers(), [clearTimers]);
 
   const start = useCallback(
-    (pool) => {
+    (pool, options = {}) => {
       if (runningRef.current) return false;
       if (!Array.isArray(pool) || pool.length === 0) return false;
 
@@ -75,9 +83,14 @@ export function useDraw({ settings, calmMotion, audio, onWinner }) {
       runningRef.current = true;
 
       // 1. Sorteio real, antes de qualquer animacao.
-      const chosen = pool[getSecureRandomIndex(pool.length)];
+      // No modo classificacao a ordem inteira e sorteada de uma vez; o
+      // primeiro colocado e quem a animacao revela no fim.
+      const isRanking = Boolean(options.ranking);
+      const order = isRanking ? secureShuffle(pool) : null;
+      const chosen = isRanking ? order[0] : pool[getSecureRandomIndex(pool.length)];
 
       setWinner(null);
+      setRanking(null);
       setDisplay(null);
       setProgress(0);
       setPhase(PHASES.PREPARE);
@@ -125,11 +138,12 @@ export function useDraw({ settings, calmMotion, audio, onWinner }) {
         runningRef.current = false;
         setPhase(PHASES.RESULT);
         setWinner(chosen);
+        if (isRanking) setRanking(order);
         setDisplay(chosen);
-        setMessage(settings.jokes ? pickRandom(afterDraw) : '');
+        setMessage(settings.jokes ? pickRandom(isRanking ? afterRanking : afterDraw) : '');
         setProgress(1);
         audio.play('win');
-        onWinner(chosen);
+        onWinner(chosen, order);
       }, hushAt + hushMs);
 
       return true;
@@ -142,6 +156,7 @@ export function useDraw({ settings, calmMotion, audio, onWinner }) {
     display,
     message,
     winner,
+    ranking,
     progress,
     start,
     reset,

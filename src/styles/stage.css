@@ -280,6 +280,77 @@
   }
 }
 
+/* ---------- Classificacao ---------- */
+
+.ranking {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 1.4vw, 1rem);
+  width: min(100%, 46rem);
+  animation: winner-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ranking__kicker {
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 2.2vw, 1.4rem);
+  letter-spacing: 0.22em;
+  color: var(--gold);
+}
+
+.ranking__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  max-height: 52vh;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
+.ranking__row {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel-soft);
+}
+
+.ranking__row[data-top='true'] {
+  border-color: color-mix(in srgb, var(--gold) 60%, transparent);
+  background: color-mix(in srgb, var(--gold) 12%, var(--panel-soft));
+}
+
+.ranking__pos {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.4vw, 1.5rem);
+  text-align: center;
+  color: var(--ink);
+}
+
+.ranking__name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.6vw, 1.7rem);
+  line-height: 1.1;
+  word-break: break-word;
+  color: #fff;
+}
+
+.ranking__emoji {
+  font-family: var(--font-ui);
+}
+
+.stage[data-mode='hacker'] .ranking__kicker,
+.stage[data-mode='hacker'] .ranking__name {
+  font-family: var(--font-mono);
+}
+
 .confetti {
   position: absolute;
   inset: 0;
@@ -451,10 +522,23 @@
   gap: clamp(0.6rem, 1.6vw, 1.4rem);
 }
 
-.deck__modes {
+.deck__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.deck__modes,
+.deck__formats {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+}
+
+.deck__formats .deck__mode[data-active='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #12061d;
 }
 
 .deck__mode {
@@ -564,7 +648,12 @@
     gap: 0.75rem;
   }
 
-  .deck__modes {
+  .deck__left {
+    align-items: center;
+  }
+
+  .deck__modes,
+  .deck__formats {
     justify-content: center;
   }
 
