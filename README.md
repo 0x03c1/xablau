@@ -11,7 +11,7 @@ Aplicação 100% estática: sem backend, sem banco, sem login, sem API externa. 
 ## Funcionalidades
 
 **Sorteio**
-- Dois tipos: **vencedor único** (um nome por vez) e **classificação** (a ordem inteira de uma vez, do 1º ao último colocado). Serve tanto para o pódio de um campeonato quanto para definir em que ordem as equipes pegam um trabalho.
+- Dois tipos: **vencedor único** (um nome por vez) e **classificação** (um lugar por vez — a cada sorteio entra o próximo colocado, 1º, 2º, 3º…, até o último, e dá para parar antes). Serve tanto para o pódio de um campeonato quanto para definir em que ordem as equipes pegam um trabalho.
 - Escolha feita com `crypto.getRandomValues()` e rejeição de amostra, sem o viés do `Math.random() % n`.
 - O resultado é definido **antes** da animação. A encenação apenas revela o que já foi decidido.
 - Fases: preparação, embaralhamento, suspense com “quase vencedores”, silêncio, revelação.
@@ -239,7 +239,7 @@ O tema escolhido é aplicado no elemento raiz e salvo no navegador.
 
 ## Verificação
 
-`npm test` roda a aplicação em um DOM simulado e confere cadastro, importação com linhas vazias e repetidas, sorteio de vencedor único até a revelação, sorteio de classificação com a ordem completa e o histórico correspondente, gravação e releitura do `localStorage`, rodízio sem repetição até esgotar a turma, reinício, remoção e desmontagem sem vazamento. Precisa de Node 18 ou mais recente. O build (`npm run build`) roda sem erros nem warnings.
+`npm test` roda a aplicação em um DOM simulado e confere cadastro, importação com linhas vazias e repetidas, sorteio de vencedor único até a revelação, classificação sorteando um lugar por vez até completar (com o histórico correspondente e o botão de reiniciar), gravação e releitura do `localStorage`, rodízio sem repetição até esgotar a turma, reinício, remoção e desmontagem sem vazamento. Precisa de Node 18 ou mais recente. O build (`npm run build`) roda sem erros nem warnings.
 
 ## Ideias para depois
 
