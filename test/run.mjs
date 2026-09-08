@@ -158,6 +158,31 @@ await click($('.card__remove'));
 check('Remocao funciona', $$('.cards .card').length === 5);
 
 root2.unmount();
+
+// --- Classificacao (ordem completa) ---------------------------------------
+window.localStorage.setItem(
+  'quemsera:settings',
+  JSON.stringify({ sound: false, format: 'ranking', duration: 'rapido', suspense: false, confetti: false, jokes: true, noRepeat: false, reduceMotion: true, theme: 'neon', mode: 'gameshow' }),
+);
+window.localStorage.setItem('quemsera:drawn', '[]');
+const root3 = mount(window.document.getElementById('root'));
+check('Botao vira CLASSIFICAR no modo classificacao', /CLASSIFICAR/.test($('.btn--draw')?.textContent || ''));
+await click($('.btn--draw'));
+await act(async () => {
+  await sleep(2600);
+});
+const rows = $$('.ranking__row');
+check('Classificacao lista todos os participantes em ordem', rows.length === 5, `${rows.length} de 5`);
+check('Primeira posicao marcada com a medalha de ouro', rows[0]?.textContent.includes('🥇'));
+const lastHistory = JSON.parse(window.localStorage.getItem('quemsera:history') || '[]')[0];
+check(
+  'Historico guarda a classificacao inteira',
+  Array.isArray(lastHistory?.order) && lastHistory.order.length === 5,
+  `${lastHistory?.order?.length} nomes`,
+);
+check('Historico mostra a classificacao no painel', $$('.history__ranking li').length === 5);
+
+root3.unmount();
 check('Unmount nao lanca erro', true);
 
 const failed = results.filter((r) => !r.ok);
