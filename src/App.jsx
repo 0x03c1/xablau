@@ -15,7 +15,7 @@ import { useFullscreen } from './hooks/useFullscreen.js';
 import { PHASES, useDraw } from './hooks/useDraw.js';
 import { DEFAULT_SETTINGS, SAMPLE_PARTICIPANTS, STORAGE_KEYS } from './data/defaults.js';
 import { MODES } from './data/modes.js';
-import { beforeDraw, emptyState, milestones } from './data/phrases.js';
+import { afterRanking, beforeDraw, emptyState, milestones } from './data/phrases.js';
 import { createParticipant, eligibleParticipants, parseList } from './utils/participants.js';
 import { pickRandom, secureShuffle } from './utils/random.js';
 import { clearState } from './utils/storage.js';
@@ -47,6 +47,18 @@ function sanitizeParticipants(stored) {
     }));
 }
 
+function sanitizeRanking(stored) {
+  if (!Array.isArray(stored)) return [];
+  return stored
+    .filter((item) => item && typeof item.id === 'string' && typeof item.label === 'string')
+    .map((item) => ({
+      id: item.id,
+      label: item.label,
+      emoji: typeof item.emoji === 'string' ? item.emoji : '',
+      body: typeof item.body === 'string' && item.body ? item.body : item.label,
+    }));
+}
+
 function sanitizeSettings(stored) {
   if (!stored || typeof stored !== 'object') return DEFAULT_SETTINGS;
   const merged = { ...DEFAULT_SETTINGS, ...stored };
@@ -65,6 +77,7 @@ export default function App() {
   const [settings, setSettings] = usePersistentState(STORAGE_KEYS.settings, DEFAULT_SETTINGS, sanitizeSettings);
   const [drawnIds, setDrawnIds] = usePersistentState(STORAGE_KEYS.drawn, [], (v) => (Array.isArray(v) ? v : []));
   const [drawCount, setDrawCount] = usePersistentState(STORAGE_KEYS.drawCount, 0, (v) => Number(v) || 0);
+  const [ranking, setRanking] = usePersistentState(STORAGE_KEYS.ranking, [], sanitizeRanking);
 
   const [toast, setToast] = useState(null);
   const [openModal, setOpenModal] = useState(null); // 'settings' | 'help' | 'paste'
@@ -87,18 +100,46 @@ export default function App() {
   );
   const everyoneDrawn = settings.noRepeat && participants.length > 0 && pool.length === 0;
 
+  const isRanking = settings.format === 'ranking';
+  const activeRanking = useMemo(() => ranking.filter((r) => validIds.has(r.id)), [ranking, validIds]);
+  const rankingPool = useMemo(() => {
+    const placed = new Set(activeRanking.map((r) => r.id));
+    return participants.filter((p) => !placed.has(p.id));
+  }, [participants, activeRanking]);
+  const rankingComplete = isRanking && participants.length > 0 && rankingPool.length === 0;
+  const drawPool = isRanking ? rankingPool : pool;
+  const drawBlocked = isRanking ? rankingComplete : everyoneDrawn;
+
   const handleWinner = useCallback(
-    (chosen, order) => {
+    (chosen) => {
       const at = Date.now();
-      if (Array.isArray(order) && order.length > 0) {
-        const ranking = order.map((p) => ({ id: p.id, label: p.label }));
-        const ids = order.map((p) => p.id);
-        setHistory((prev) => [{ at, kind: 'ranking', order: ranking }, ...prev].slice(0, HISTORY_LIMIT));
-        setDrawnIds((prev) => Array.from(new Set([...prev, ...ids])));
-      } else {
-        setHistory((prev) => [{ id: chosen.id, label: chosen.label, at }, ...prev].slice(0, HISTORY_LIMIT));
-        setDrawnIds((prev) => (prev.includes(chosen.id) ? prev : [...prev, chosen.id]));
+
+      if (isRanking) {
+        const entry = { id: chosen.id, label: chosen.label, emoji: chosen.emoji, body: chosen.body };
+        const nextRanking = [...activeRanking, entry];
+        setRanking(nextRanking);
+        setTeaser(pickRandom(beforeDraw));
+
+        if (nextRanking.length >= participants.length) {
+          setHistory((prev) =>
+            [
+              { at, kind: 'ranking', order: nextRanking.map((p) => ({ id: p.id, label: p.label })) },
+              ...prev,
+            ].slice(0, HISTORY_LIMIT),
+          );
+          setDrawCount((prev) => {
+            const next = prev + 1;
+            const milestone = milestones[next];
+            if (milestone) setTimeout(() => notify(milestone, 'party'), 1400);
+            return next;
+          });
+          if (settings.jokes) setTimeout(() => notify(pickRandom(afterRanking), 'party'), 900);
+        }
+        return;
       }
+
+      setHistory((prev) => [{ id: chosen.id, label: chosen.label, at }, ...prev].slice(0, HISTORY_LIMIT));
+      setDrawnIds((prev) => (prev.includes(chosen.id) ? prev : [...prev, chosen.id]));
       setDrawCount((prev) => {
         const next = prev + 1;
         const milestone = milestones[next];
@@ -107,7 +148,7 @@ export default function App() {
       });
       setTeaser(pickRandom(beforeDraw));
     },
-    [notify, setDrawCount, setDrawnIds, setHistory],
+    [activeRanking, isRanking, notify, participants.length, setDrawCount, setDrawnIds, setHistory, setRanking, settings.jokes],
   );
 
   const draw = useDraw({ settings, calmMotion, audio, onWinner: handleWinner });
@@ -120,13 +161,24 @@ export default function App() {
       notify(pickRandom(emptyState), 'warn');
       return;
     }
-    if (pool.length === 0) {
+    if (drawPool.length === 0) {
       audio.play('error');
-      notify('🎉 TODO MUNDO PARTICIPOU! Reinicie o rodízio para começar de novo.', 'party');
+      notify(
+        isRanking
+          ? '🏁 Classificação completa. Reinicie para sortear de novo.'
+          : '🎉 TODO MUNDO PARTICIPOU! Reinicie o rodízio para começar de novo.',
+        'party',
+      );
       return;
     }
-    draw.start(pool, { ranking: settings.format === 'ranking' });
-  }, [audio, draw, notify, participants.length, pool, settings.format]);
+    draw.start(drawPool);
+  }, [audio, draw, drawPool, isRanking, notify, participants.length]);
+
+  const resetRanking = useCallback(() => {
+    setRanking([]);
+    draw.reset();
+    notify('Classificação reiniciada. Todos voltam para o sorteio.', 'ok');
+  }, [draw, notify, setRanking]);
 
   const addParticipant = useCallback(
     (raw) => {
@@ -148,8 +200,9 @@ export default function App() {
     (id) => {
       setParticipants((prev) => prev.filter((p) => p.id !== id));
       setDrawnIds((prev) => prev.filter((drawnId) => drawnId !== id));
+      setRanking((prev) => prev.filter((r) => r.id !== id));
     },
-    [setDrawnIds, setParticipants],
+    [setDrawnIds, setParticipants, setRanking],
   );
 
   const importList = useCallback(
@@ -181,9 +234,10 @@ export default function App() {
   const clearAll = useCallback(() => {
     setParticipants([]);
     setDrawnIds([]);
+    setRanking([]);
     draw.reset();
     notify('Lista zerada.', 'ok');
-  }, [draw, notify, setDrawnIds, setParticipants]);
+  }, [draw, notify, setDrawnIds, setParticipants, setRanking]);
 
   const loadSample = useCallback(() => {
     const { added } = parseList(SAMPLE_PARTICIPANTS.join('\n'), []);
@@ -305,13 +359,15 @@ export default function App() {
             display={draw.display}
             message={draw.message}
             winner={draw.winner}
-            ranking={draw.ranking}
             progress={draw.progress}
-            pool={pool}
+            pool={drawPool}
             totalParticipants={participants.length}
             settings={settings}
             calmMotion={calmMotion}
             idleHint={idleHint}
+            ranking={activeRanking}
+            rankingComplete={rankingComplete}
+            onResetRanking={resetRanking}
             onDrawAgain={startDraw}
           />
 
@@ -324,12 +380,15 @@ export default function App() {
             onCancel={draw.reset}
             isRunning={draw.isRunning}
             phase={draw.phase}
-            disabled={participants.length === 0 || everyoneDrawn}
+            disabled={participants.length === 0 || drawBlocked}
             noRepeat={settings.noRepeat}
             drawnCount={activeDrawn.length}
             total={participants.length}
             everyoneDrawn={everyoneDrawn}
             onResetDrawn={resetDrawn}
+            rankingCount={activeRanking.length}
+            rankingComplete={rankingComplete}
+            onResetRanking={resetRanking}
             teaser={draw.phase === PHASES.IDLE && settings.jokes ? teaser : ''}
           />
         </div>
