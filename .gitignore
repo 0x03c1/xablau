@@ -9,3 +9,5 @@ build/
 .idea/
 .vscode/
 coverage/
+dist-single/
+test/bundle.cjs
