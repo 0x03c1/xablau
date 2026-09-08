@@ -1,17 +1,17 @@
 /**
- * Todas as frases da aplicacao ficam aqui.
+ * Todas as frases da aplicação ficam aqui.
  * Para mudar o humor do sorteio, edite apenas este arquivo.
  */
 
 export const beforeDraw = [
-  'Hoje a sorte esta trabalhando.',
-  'Alguem vai precisar participar...',
-  'Nao vale esconder o caderno.',
-  'Seu destino esta nas maos do JavaScript.',
-  'Boa sorte. Voce vai precisar.',
-  'A chamada de hoje e diferente.',
-  'Respira. Ainda da tempo de fingir que entendeu.',
-  'Ninguem sai da sala agora.',
+  'Hoje a sorte está trabalhando.',
+  'Alguém vai precisar participar...',
+  'Não vale esconder o caderno.',
+  'Seu destino está nas mãos do JavaScript.',
+  'Boa sorte. Você vai precisar.',
+  'A chamada de hoje é diferente.',
+  'Respira. Ainda dá tempo de fingir que entendeu.',
+  'Ninguém sai da sala agora.',
 ];
 
 export const prepare = [
@@ -28,45 +28,45 @@ export const shuffling = [
   'Processando destino...',
   'Misturando tudo...',
   'Embaralhando a turma...',
-  'Rodando o dado invisivel...',
+  'Rodando o dado invisível...',
 ];
 
 export const suspense = [
-  'Sera que e voce?',
-  'Nao olhe para o lado...',
+  'Será que é você?',
+  'Não olhe para o lado...',
   '👀',
   'Estamos chegando...',
   'Quase...',
   'Calma, professor...',
-  'Isso esta ficando serio.',
+  'Isso está ficando sério.',
   '😳',
   'Isso foi por pouco...',
-  'Nao comemore ainda.',
-  'Alguem aqui ja sabe.',
-  'Ultima chance de rezar.',
+  'Não comemore ainda.',
+  'Alguém aqui já sabe.',
+  'Última chance de rezar.',
 ];
 
 export const afterDraw = [
   '🎉 Temos um escolhido!',
-  'Parabens! Ou nao.',
-  'Hoje a sorte escolheu voce.',
+  'Parabéns! Ou não.',
+  'Hoje a sorte escolheu você.',
   'Pode respirar. O resto da turma, digo.',
-  'Agora e com voce.',
-  'A turma nao tem mais escapatoria.',
-  'O algoritmo foi justo. Voce que teve azar.',
+  'Agora é com você.',
+  'A turma não tem mais escapatória.',
+  'O algoritmo foi justo. Você que não teve sorte.',
 ];
 
 export const afterRanking = [
-  '🏁 Classificacao completa, do primeiro ao ultimo.',
+  '🏁 Classificação completa, do primeiro ao último.',
   'A ordem oficial saiu. Sem recurso.',
-  'Esta definido: cada um no seu lugar.',
-  'Do primeiro colocado ao ultimo, o sorteio decidiu.',
-  'Pronto. A fila esta montada.',
+  'Está definido: cada um no seu lugar.',
+  'Do primeiro colocado ao último, o sorteio decidiu.',
+  'Pronto. A fila está montada.',
 ];
 
 export const emptyState = [
-  '👀 Ei... primeiro precisamos de alguem para sortear.',
-  'A lista esta vazia. Ate o destino precisa de nomes.',
+  '👀 Ei... primeiro precisamos de alguém para sortear.',
+  'A lista está vazia. Até o destino precisa de nomes.',
   'Adicione participantes ali do lado e voltamos a conversar.',
 ];
 
@@ -82,23 +82,23 @@ export const hackerLog = [
 
 export const chaosNoise = [
   'ISSO FUGIU DO CONTROLE',
-  'ALGUEM SEGURA A TELA',
+  'ALGUÉM SEGURA A TELA',
   'AAAAAAA',
   'QUEM PROGRAMOU ISSO?',
   'O CAOS PENSA',
-  'NAO OLHE AGORA',
+  'NÃO OLHE AGORA',
 ];
 
 export const rocketLog = [
   'CONTAGEM REGRESSIVA...',
-  'ORBITA ESTAVEL',
+  'ÓRBITA ESTÁVEL',
   'CAPTURANDO ALVO',
-  'TRAJETORIA CALCULADA',
+  'TRAJETÓRIA CALCULADA',
 ];
 
 export const milestones = {
-  10: '🔟 Decimo sorteio do dia. A turma ja entendeu o recado.',
-  25: '🏅 Vinte e cinco sorteios. Isso aqui virou um programa de auditorio.',
-  50: '🐉 Cinquenta sorteios. Voce desbloqueou o modo lendario.',
-  100: '💯 Cem sorteios. Sinceramente, va tomar um cafe.',
+  10: '🔟 Décimo sorteio do dia. A turma já entendeu o recado.',
+  25: '🏅 Vinte e cinco sorteios. Isso aqui virou um programa de auditório.',
+  50: '🐉 Cinquenta sorteios. Você desbloqueou o modo lendário.',
+  100: '💯 Cem sorteios. Sinceramente, vá tomar um café.',
 };

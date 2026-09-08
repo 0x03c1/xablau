@@ -7,6 +7,7 @@ export const STORAGE_KEYS = {
   settings: 'settings',
   drawn: 'drawn',
   drawCount: 'drawCount',
+  ranking: 'ranking',
 };
 
 export const DEFAULT_SETTINGS = {
