@@ -280,55 +280,112 @@
   }
 }
 
-/* ---------- Classificacao ---------- */
+/* ---------- Classificacao: um lugar por vez ---------- */
 
 .ranking {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.5rem, 1.4vw, 1rem);
+  gap: clamp(0.5rem, 1.6vw, 1rem);
   width: min(100%, 46rem);
-  animation: winner-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ranking__kicker {
   font-family: var(--font-display);
-  font-size: clamp(0.9rem, 2.2vw, 1.4rem);
-  letter-spacing: 0.22em;
+  font-size: clamp(0.8rem, 2vw, 1.25rem);
+  letter-spacing: 0.2em;
+  text-align: center;
   color: var(--gold);
+}
+
+.ranking__spotlight {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  min-height: clamp(6rem, 15vh, 10rem);
+}
+
+.ranking__reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  text-align: center;
+  animation: winner-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ranking__reveal[data-calm='true'] {
+  animation-duration: 0.2s;
+}
+
+.ranking__reveal-pos {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 2.4rem);
+  color: var(--gold);
+  text-shadow: 0 0 20px color-mix(in srgb, var(--gold) 55%, transparent);
+}
+
+.ranking__reveal-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 8vw, 4.5rem);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  color: #fff;
+  text-shadow:
+    0 0 12px var(--accent),
+    0 0 42px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.ranking__done {
+  font-size: clamp(2.5rem, 10vw, 4.5rem);
+  filter: drop-shadow(0 0 24px color-mix(in srgb, var(--gold) 60%, transparent));
+}
+
+.ranking__hint {
+  color: var(--muted);
+  font-size: clamp(0.82rem, 1.7vw, 1rem);
+  text-align: center;
+  max-width: 34ch;
 }
 
 .ranking__list {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.3rem;
   width: 100%;
-  max-height: 52vh;
+  max-height: min(38vh, 18rem);
   overflow-y: auto;
   padding-right: 0.2rem;
+  scrollbar-width: thin;
 }
 
 .ranking__row {
   display: grid;
-  grid-template-columns: 2.6rem 1fr;
+  grid-template-columns: 2.4rem 1fr;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.5rem 0.9rem;
+  padding: 0.42rem 0.8rem;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--panel-soft);
 }
 
-.ranking__row[data-top='true'] {
-  border-color: color-mix(in srgb, var(--gold) 60%, transparent);
-  background: color-mix(in srgb, var(--gold) 12%, var(--panel-soft));
+.ranking__row[data-fresh='true'] {
+  border-color: color-mix(in srgb, var(--gold) 65%, transparent);
+  background: color-mix(in srgb, var(--gold) 14%, var(--panel-soft));
+  animation: reel-swap 0.3s ease-out;
 }
 
 .ranking__pos {
   font-family: var(--font-display);
-  font-size: clamp(1rem, 2.4vw, 1.5rem);
+  font-size: clamp(0.95rem, 2.2vw, 1.35rem);
   text-align: center;
-  color: var(--ink);
+  color: var(--gold);
 }
 
 .ranking__name {
@@ -336,9 +393,9 @@
   align-items: center;
   gap: 0.5rem;
   font-family: var(--font-display);
-  font-size: clamp(1rem, 2.6vw, 1.7rem);
-  line-height: 1.1;
-  word-break: break-word;
+  font-size: clamp(0.95rem, 2.3vw, 1.5rem);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
   color: #fff;
 }
 
@@ -346,8 +403,15 @@
   font-family: var(--font-ui);
 }
 
+.ranking__actions {
+  display: flex;
+  justify-content: center;
+  min-height: 1rem;
+}
+
 .stage[data-mode='hacker'] .ranking__kicker,
-.stage[data-mode='hacker'] .ranking__name {
+.stage[data-mode='hacker'] .ranking__name,
+.stage[data-mode='hacker'] .ranking__reveal-name {
   font-family: var(--font-mono);
 }
 
@@ -650,6 +714,7 @@
 
   .deck__left {
     align-items: center;
+    width: 100%;
   }
 
   .deck__modes,
@@ -667,14 +732,49 @@
   }
 }
 
+@media (max-width: 560px) {
+  .stage {
+    min-height: clamp(17rem, 52vh, 26rem);
+    box-shadow: var(--shadow-deep), inset 0 0 0 4px rgba(0, 0, 0, 0.35);
+  }
+
+  .reel__window {
+    width: 100%;
+  }
+
+  .deck__mode {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .ranking__list {
+    max-height: 34vh;
+  }
+
+  .ranking__row {
+    grid-template-columns: 2rem 1fr;
+    gap: 0.45rem;
+    padding: 0.4rem 0.55rem;
+  }
+
+  .ranking__actions .btn {
+    width: 100%;
+  }
+}
+
 /* ---------- Tela cheia e projetor ---------- */
 
 .app[data-fullscreen='true'] .stage {
   min-height: 68vh;
 }
 
-.app[data-fullscreen='true'] .winner__name {
+.app[data-fullscreen='true'] .winner__name,
+.app[data-fullscreen='true'] .ranking__reveal-name {
   font-size: clamp(3.5rem, 15vw, 12rem);
+}
+
+.app[data-fullscreen='true'] .ranking__list {
+  max-height: 34vh;
 }
 
 .app[data-fullscreen='true'] .reel__value {
