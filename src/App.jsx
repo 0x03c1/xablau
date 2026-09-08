@@ -51,6 +51,7 @@ function sanitizeSettings(stored) {
   if (!stored || typeof stored !== 'object') return DEFAULT_SETTINGS;
   const merged = { ...DEFAULT_SETTINGS, ...stored };
   if (!MODES.some((m) => m.id === merged.mode)) merged.mode = DEFAULT_SETTINGS.mode;
+  if (merged.format !== 'single' && merged.format !== 'ranking') merged.format = DEFAULT_SETTINGS.format;
   return merged;
 }
 
@@ -87,9 +88,17 @@ export default function App() {
   const everyoneDrawn = settings.noRepeat && participants.length > 0 && pool.length === 0;
 
   const handleWinner = useCallback(
-    (chosen) => {
-      setHistory((prev) => [{ id: chosen.id, label: chosen.label, at: Date.now() }, ...prev].slice(0, HISTORY_LIMIT));
-      setDrawnIds((prev) => (prev.includes(chosen.id) ? prev : [...prev, chosen.id]));
+    (chosen, order) => {
+      const at = Date.now();
+      if (Array.isArray(order) && order.length > 0) {
+        const ranking = order.map((p) => ({ id: p.id, label: p.label }));
+        const ids = order.map((p) => p.id);
+        setHistory((prev) => [{ at, kind: 'ranking', order: ranking }, ...prev].slice(0, HISTORY_LIMIT));
+        setDrawnIds((prev) => Array.from(new Set([...prev, ...ids])));
+      } else {
+        setHistory((prev) => [{ id: chosen.id, label: chosen.label, at }, ...prev].slice(0, HISTORY_LIMIT));
+        setDrawnIds((prev) => (prev.includes(chosen.id) ? prev : [...prev, chosen.id]));
+      }
       setDrawCount((prev) => {
         const next = prev + 1;
         const milestone = milestones[next];
@@ -116,8 +125,8 @@ export default function App() {
       notify('🎉 TODO MUNDO PARTICIPOU! Reinicie o rodízio para começar de novo.', 'party');
       return;
     }
-    draw.start(pool);
-  }, [audio, draw, notify, participants.length, pool]);
+    draw.start(pool, { ranking: settings.format === 'ranking' });
+  }, [audio, draw, notify, participants.length, pool, settings.format]);
 
   const addParticipant = useCallback(
     (raw) => {
@@ -296,6 +305,7 @@ export default function App() {
             display={draw.display}
             message={draw.message}
             winner={draw.winner}
+            ranking={draw.ranking}
             progress={draw.progress}
             pool={pool}
             totalParticipants={participants.length}
@@ -308,6 +318,8 @@ export default function App() {
           <ControlDeck
             mode={settings.mode}
             onModeChange={(id) => setSettings((prev) => ({ ...prev, mode: id }))}
+            format={settings.format}
+            onFormatChange={(format) => setSettings((prev) => ({ ...prev, format }))}
             onDraw={startDraw}
             onCancel={draw.reset}
             isRunning={draw.isRunning}
