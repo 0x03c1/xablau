@@ -1,11 +1,10 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { PHASES } from '../hooks/useDraw.js';
-import { chaosNoise, hackerLog, rocketLog } from '../data/phrases.js';
+import { hackerLog, rocketLog } from '../data/phrases.js';
 import { pickRandom, randomFloat } from '../utils/random.js';
 import Confetti from './Confetti.jsx';
 
 const CHAOS_EMOJIS = ['🎲', '🔥', '🚀', '👀', '💥', '🤖', '🎯', '⚡', '🍀', '🧠', '🎉', '😳'];
-const MEDALS = ['🥇', '🥈', '🥉'];
 
 /** Faixa de lampadas do modo game show. */
 const Bulbs = memo(function Bulbs({ count = 18 }) {
@@ -90,23 +89,133 @@ function ReelItem({ item, phase }) {
   );
 }
 
+/** A roleta de nomes: janela girando, mensagem e barra de progresso. */
+function Reel({ mode, phase, progress, display, running, idleLabel, message, liveRef }) {
+  return (
+    <div className="reel" data-running={running ? 'true' : 'false'}>
+      {mode === 'hacker' ? <HackerLog phase={phase} progress={progress} /> : null}
+      <div className="reel__window">
+        {phase === PHASES.IDLE ? (
+          <p className="reel__idle">
+            <span aria-hidden="true">🎲</span>
+            <span>{idleLabel}</span>
+          </p>
+        ) : (
+          <ReelItem item={display} phase={phase} />
+        )}
+      </div>
+      <p className="stage__message" ref={liveRef}>
+        {message}
+      </p>
+      <div className="stage__progress" aria-hidden="true">
+        <span style={{ transform: `scaleX(${running ? progress : 0})` }} />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Classificacao: um lugar por vez. A cada sorteio o proximo colocado entra na
+ * lista, com "1o, 2o, 3o..." ate o ultimo. Sem medalhas, so a posicao.
+ */
+function RankingStage({ reel, phase, winner, ranking, complete, message, calmMotion, onDrawAgain, onResetRanking }) {
+  const revealing = phase === PHASES.RESULT && winner;
+  const nextPlace = ranking.length + (revealing ? 0 : 1);
+  const revealedPlace = ranking.length;
+
+  const kicker = complete
+    ? 'CLASSIFICAÇÃO FINAL'
+    : revealing
+      ? `${revealedPlace}º LUGAR`
+      : reel.running
+        ? `SORTEANDO O ${nextPlace}º LUGAR`
+        : `PRÓXIMO: ${nextPlace}º LUGAR`;
+
+  return (
+    <div className="ranking" role="group" aria-label="Classificação do sorteio">
+      <p className="ranking__kicker">{kicker}</p>
+
+      <div className="ranking__spotlight">
+        {reel.running ? (
+          <Reel {...reel} phase={phase} />
+        ) : revealing ? (
+          <p className="ranking__reveal" data-calm={calmMotion ? 'true' : 'false'}>
+            <span className="ranking__reveal-pos" aria-hidden="true">
+              {revealedPlace}º
+            </span>
+            <span className="ranking__reveal-name">
+              {winner.emoji ? <span className="ranking__emoji">{winner.emoji}</span> : null}
+              <span>{winner.body}</span>
+            </span>
+          </p>
+        ) : complete ? (
+          <p className="ranking__done" aria-hidden="true">
+            🏁
+          </p>
+        ) : (
+          <Reel {...reel} phase={PHASES.IDLE} />
+        )}
+      </div>
+
+      {ranking.length > 0 ? (
+        <ol className="ranking__list">
+          {ranking.map((item, index) => (
+            <li
+              key={item.id}
+              className="ranking__row"
+              data-fresh={revealing && index === ranking.length - 1 ? 'true' : 'false'}
+            >
+              <span className="ranking__pos" aria-hidden="true">
+                {index + 1}º
+              </span>
+              <span className="ranking__name">
+                {item.emoji ? <span className="ranking__emoji">{item.emoji}</span> : null}
+                <span>{item.body || item.label}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="ranking__hint">A cada sorteio, o próximo colocado entra na lista.</p>
+      )}
+
+      {message && phase === PHASES.RESULT ? <p className="winner__joke">{message}</p> : null}
+
+      <div className="ranking__actions">
+        {complete ? (
+          <button type="button" className="btn btn--ghost" onClick={onResetRanking}>
+            Nova classificação
+          </button>
+        ) : phase === PHASES.RESULT ? (
+          <button type="button" className="btn btn--ghost" onClick={onDrawAgain}>
+            Sortear o {nextPlace}º lugar
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function Stage({
   mode,
   phase,
   display,
   message,
   winner,
-  ranking,
   progress,
   pool,
   totalParticipants,
   settings,
   calmMotion,
   idleHint,
+  ranking,
+  rankingComplete,
+  onResetRanking,
   onDrawAgain,
 }) {
   const running = phase !== PHASES.IDLE && phase !== PHASES.RESULT;
   const liveRef = useRef(null);
+  const isRanking = settings.format === 'ranking';
 
   const modeLabel = useMemo(() => {
     if (phase === PHASES.IDLE) return idleHint;
@@ -115,6 +224,24 @@ export default function Stage({
     if (mode === 'chaos' && phase === PHASES.HUSH) return 'Ok. Chega.';
     return message;
   }, [mode, phase, message, idleHint]);
+
+  const reel = {
+    mode,
+    progress,
+    display,
+    running,
+    message: modeLabel,
+    liveRef,
+    idleLabel: totalParticipants > 0 ? 'Tudo pronto' : 'Lista vazia',
+  };
+
+  const liveMessage = (() => {
+    if (phase !== PHASES.RESULT || !winner) return '';
+    if (isRanking) {
+      return `${ranking.length}º lugar: ${winner.label}${rankingComplete ? '. Classificação completa.' : ''}`;
+    }
+    return `Sorteado: ${winner.label}`;
+  })();
 
   return (
     <section
@@ -141,27 +268,18 @@ export default function Stage({
           </div>
         ) : null}
 
-        {phase === PHASES.RESULT && ranking && ranking.length > 0 ? (
-          <div className="ranking" role="group" aria-label="Classificação do sorteio">
-            <p className="ranking__kicker">CLASSIFICAÇÃO</p>
-            <ol className="ranking__list">
-              {ranking.map((item, index) => (
-                <li key={item.id} className="ranking__row" data-top={index < 3 ? 'true' : 'false'}>
-                  <span className="ranking__pos" aria-hidden="true">
-                    {MEDALS[index] || `${index + 1}º`}
-                  </span>
-                  <span className="ranking__name">
-                    {item.emoji ? <span className="ranking__emoji">{item.emoji}</span> : null}
-                    <span>{item.body}</span>
-                  </span>
-                </li>
-              ))}
-            </ol>
-            {message ? <p className="winner__joke">{message}</p> : null}
-            <button type="button" className="btn btn--ghost winner__again" onClick={onDrawAgain}>
-              Sortear de novo
-            </button>
-          </div>
+        {isRanking ? (
+          <RankingStage
+            reel={reel}
+            phase={phase}
+            winner={winner}
+            ranking={ranking}
+            complete={rankingComplete}
+            message={message}
+            calmMotion={calmMotion}
+            onDrawAgain={onDrawAgain}
+            onResetRanking={onResetRanking}
+          />
         ) : phase === PHASES.RESULT && winner ? (
           <div className="winner" role="group" aria-label="Resultado do sorteio">
             <p className="winner__crown" aria-hidden="true">
@@ -178,36 +296,12 @@ export default function Stage({
             </button>
           </div>
         ) : (
-          <div className="reel" data-running={running ? 'true' : 'false'}>
-            {mode === 'hacker' ? <HackerLog phase={phase} progress={progress} /> : null}
-            <div className="reel__window">
-              {phase === PHASES.IDLE ? (
-                <p className="reel__idle">
-                  <span aria-hidden="true">🎲</span>
-                  <span>{totalParticipants > 0 ? 'Tudo pronto' : 'Lista vazia'}</span>
-                </p>
-              ) : (
-                <ReelItem item={display} phase={phase} />
-              )}
-            </div>
-            <p className="stage__message" ref={liveRef}>
-              {modeLabel}
-            </p>
-            <div className="stage__progress" aria-hidden="true">
-              <span style={{ transform: `scaleX(${running ? progress : 0})` }} />
-            </div>
-          </div>
+          <Reel {...reel} phase={phase} />
         )}
       </div>
 
       <p className="visually-hidden" role="status" aria-live="polite">
-        {phase !== PHASES.RESULT
-          ? ''
-          : ranking && ranking.length > 0
-            ? `Classificação: ${ranking.map((item, i) => `${i + 1}º ${item.label}`).join(', ')}`
-            : winner
-              ? `Sorteado: ${winner.label}`
-              : ''}
+        {liveMessage}
       </p>
     </section>
   );

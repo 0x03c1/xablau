@@ -19,9 +19,9 @@ export default function HelpModal({ open, onClose }) {
         </li>
         <li>
           <strong>Escolha o tipo.</strong> <em>Vencedor único</em> sorteia um nome por vez. <em>Classificação</em>{' '}
-          sorteia a ordem inteira de uma vez, do 1º ao último colocado — serve tanto para pódio de campeonato quanto
-          para definir a ordem das equipes num trabalho. O modo (game show, hacker, foguete, caos), o tema e a duração
-          ficam em Configurações.
+          revela um lugar por vez — a cada sorteio entra o próximo colocado (1º, 2º, 3º…) até o último. Serve para o
+          pódio de um campeonato e para definir a ordem das equipes num trabalho; dá para parar a qualquer momento (só
+          o top 3, por exemplo). O modo, o tema e a duração ficam em Configurações.
         </li>
         <li>
           <strong>Aperte SORTEAR.</strong> O resultado é definido antes da animação, com{' '}

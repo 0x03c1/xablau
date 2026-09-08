@@ -2,7 +2,7 @@ import { MODES } from '../data/modes.js';
 
 const FORMATS = [
   { id: 'single', icon: '🎯', name: 'Vencedor', tagline: 'Sorteia um nome por vez.' },
-  { id: 'ranking', icon: '🏁', name: 'Classificação', tagline: 'Sorteia a ordem inteira, do 1º ao último.' },
+  { id: 'ranking', icon: '🏁', name: 'Classificação', tagline: 'Um lugar por vez, do 1º ao último.' },
 ];
 
 export default function ControlDeck({
@@ -20,9 +20,24 @@ export default function ControlDeck({
   total,
   everyoneDrawn,
   onResetDrawn,
+  rankingCount,
+  rankingComplete,
+  onResetRanking,
   teaser,
 }) {
   const ranking = format === 'ranking';
+  const nextPlace = rankingCount + 1;
+
+  let mainLabel = 'SORTEAR';
+  let mainHint = 'ou aperte espaço';
+  if (ranking) {
+    mainLabel = rankingComplete ? 'Classificação completa' : 'SORTEAR';
+    mainHint = rankingComplete ? 'reinicie abaixo' : `${nextPlace}º lugar`;
+  } else if (everyoneDrawn) {
+    mainLabel = 'Todo mundo já participou';
+    mainHint = 'reinicie o rodízio';
+  }
+
   return (
     <div className="deck">
       <div className="deck__left">
@@ -78,16 +93,21 @@ export default function ControlDeck({
             disabled={disabled}
             data-phase={phase}
           >
-            <span className="btn__label">
-              {everyoneDrawn ? 'Todo mundo já participou' : ranking ? 'CLASSIFICAR' : 'SORTEAR'}
-            </span>
-            <span className="btn__hint">{everyoneDrawn ? 'reinicie o rodízio' : 'ou aperte espaço'}</span>
+            <span className="btn__label">{mainLabel}</span>
+            <span className="btn__hint">{mainHint}</span>
           </button>
         )}
       </div>
 
       <div className="deck__status">
-        {noRepeat ? (
+        {ranking ? (
+          <p className="deck__counter">
+            <strong>
+              {rankingCount} de {total}
+            </strong>{' '}
+            {rankingCount === 1 ? 'posição definida' : 'posições definidas'}
+          </p>
+        ) : noRepeat ? (
           <p className="deck__counter">
             <strong>
               {drawnCount} de {total}
@@ -97,7 +117,12 @@ export default function ControlDeck({
         ) : (
           <p className="deck__counter deck__counter--dim">{total} na roda</p>
         )}
-        {everyoneDrawn ? (
+        {ranking && rankingCount > 0 ? (
+          <button type="button" className="chip chip--bright" onClick={onResetRanking}>
+            🔄 Reiniciar classificação
+          </button>
+        ) : null}
+        {!ranking && everyoneDrawn ? (
           <button type="button" className="chip chip--bright" onClick={onResetDrawn}>
             🔄 Reiniciar sorteios
           </button>

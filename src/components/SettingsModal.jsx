@@ -33,7 +33,7 @@ export default function SettingsModal({ open, onClose, settings, onChange, onRes
               onClick={() => set({ format: 'ranking' })}
             >
               Classificação
-              <small>do 1º ao último</small>
+              <small>um lugar por vez</small>
             </button>
           </div>
         </fieldset>
