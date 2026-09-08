@@ -159,28 +159,41 @@ check('Remocao funciona', $$('.cards .card').length === 5);
 
 root2.unmount();
 
-// --- Classificacao (ordem completa) ---------------------------------------
+// --- Classificacao: um lugar por vez -------------------------------------
 window.localStorage.setItem(
   'quemsera:settings',
   JSON.stringify({ sound: false, format: 'ranking', duration: 'rapido', suspense: false, confetti: false, jokes: true, noRepeat: false, reduceMotion: true, theme: 'neon', mode: 'gameshow' }),
 );
 window.localStorage.setItem('quemsera:drawn', '[]');
+window.localStorage.setItem('quemsera:ranking', '[]');
+window.localStorage.setItem('quemsera:history', '[]');
 const root3 = mount(window.document.getElementById('root'));
-check('Botao vira CLASSIFICAR no modo classificacao', /CLASSIFICAR/.test($('.btn--draw')?.textContent || ''));
-await click($('.btn--draw'));
-await act(async () => {
-  await sleep(2600);
-});
-const rows = $$('.ranking__row');
-check('Classificacao lista todos os participantes em ordem', rows.length === 5, `${rows.length} de 5`);
-check('Primeira posicao marcada com a medalha de ouro', rows[0]?.textContent.includes('🥇'));
+check('Botao mostra o proximo lugar a sortear', /1º lugar/.test($('.btn--draw')?.textContent || ''), $('.btn--draw')?.textContent);
+
+for (let place = 1; place <= 5; place += 1) {
+  await click(drawBtn());
+  await act(async () => {
+    await sleep(2600);
+  });
+  const rows = $$('.ranking__row');
+  check(`Classificacao acumula ${place} lugar(es)`, rows.length === place, `${rows.length} linhas`);
+}
+
+const finalRows = $$('.ranking__row').map((el) => el.textContent);
+check('Posicoes numeradas de 1o a 5o, sem medalhas', finalRows.every((t, i) => t.includes(`${i + 1}º`)) && !finalRows.join('').includes('🥇'));
+check('Classificacao completa desabilita o botao', drawBtn().disabled);
+check('Botao avisa que a classificacao terminou', /completa/i.test(drawBtn().textContent));
+
 const lastHistory = JSON.parse(window.localStorage.getItem('quemsera:history') || '[]')[0];
 check(
-  'Historico guarda a classificacao inteira',
+  'Historico guarda a classificacao inteira ao terminar',
   Array.isArray(lastHistory?.order) && lastHistory.order.length === 5,
   `${lastHistory?.order?.length} nomes`,
 );
 check('Historico mostra a classificacao no painel', $$('.history__ranking li').length === 5);
+
+await click($('.chip--bright'));
+check('Reiniciar classificacao limpa a lista', $$('.ranking__row').length === 0 && !drawBtn().disabled);
 
 root3.unmount();
 check('Unmount nao lanca erro', true);
