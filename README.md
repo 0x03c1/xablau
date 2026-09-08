@@ -11,8 +11,9 @@ Aplicação 100% estática: sem backend, sem banco, sem login, sem API externa. 
 ## Funcionalidades
 
 **Sorteio**
+- Dois tipos: **vencedor único** (um nome por vez) e **classificação** (a ordem inteira de uma vez, do 1º ao último colocado). Serve tanto para o pódio de um campeonato quanto para definir em que ordem as equipes pegam um trabalho.
 - Escolha feita com `crypto.getRandomValues()` e rejeição de amostra, sem o viés do `Math.random() % n`.
-- O vencedor é definido **antes** da animação. A encenação apenas revela o que já foi decidido.
+- O resultado é definido **antes** da animação. A encenação apenas revela o que já foi decidido.
 - Fases: preparação, embaralhamento, suspense com “quase vencedores”, silêncio, revelação.
 - Quatro modos visuais: game show, hacker, foguete e caos.
 - Duração ajustável (rápido, normal, épico).
@@ -114,7 +115,9 @@ quem-sera/
 ├── netlify.toml
 ├── vite.config.js
 ├── public/
-│   └── favicon.svg
+│   ├── favicon.svg
+│   ├── og-image.svg          fonte da imagem de preview social
+│   └── og-image.png          1200×630, usada por WhatsApp e redes sociais
 ├── scripts/
 │   └── build-single.mjs      versão de arquivo único
 ├── test/
@@ -156,6 +159,20 @@ quem-sera/
         ├── stage.css         palco, roleta, revelação, modos
         ├── modals.css        janelas e formulários
         └── themes.css        variações de cor
+```
+
+---
+
+## Preview em redes sociais
+
+O `index.html` traz as tags Open Graph e Twitter Card, e `public/og-image.png` (1200×630) é a imagem que aparece ao colar o link no WhatsApp, Telegram, X, Discord etc.
+
+O WhatsApp exige uma URL **absoluta** em `og:image`. A URL de produção (`https://xablau.netlify.app`) já está no `index.html`. Em deploy preview do Netlify o `vite.config.js` troca pelo endereço do preview (`DEPLOY_PRIME_URL`). Trocou de domínio? Ajuste o `index.html` e a constante `SITE_URL_IN_HTML` no `vite.config.js`; para builds fora do Netlify dá para forçar com `SITE_URL=https://meudominio.com npm run build`.
+
+Para regenerar a imagem depois de editar `public/og-image.svg`:
+
+```bash
+rsvg-convert -w 1200 -h 630 public/og-image.svg -o public/og-image.png
 ```
 
 ---
@@ -222,12 +239,12 @@ O tema escolhido é aplicado no elemento raiz e salvo no navegador.
 
 ## Verificação
 
-`npm test` roda a aplicação em um DOM simulado e confere 24 pontos: cadastro, importação com linhas vazias e repetidas, sorteio completo até a revelação, gravação e releitura do `localStorage`, rodízio sem repetição até esgotar a turma, reinício, remoção e desmontagem sem vazamento. O build (`npm run build`) roda sem erros nem warnings.
+`npm test` roda a aplicação em um DOM simulado e confere cadastro, importação com linhas vazias e repetidas, sorteio de vencedor único até a revelação, sorteio de classificação com a ordem completa e o histórico correspondente, gravação e releitura do `localStorage`, rodízio sem repetição até esgotar a turma, reinício, remoção e desmontagem sem vazamento. Precisa de Node 18 ou mais recente. O build (`npm run build`) roda sem erros nem warnings.
 
 ## Ideias para depois
 
 - Sortear grupos ou duplas de uma vez, não só um nome.
-- Sortear vários vencedores por rodada (primeiro, segundo, terceiro lugar).
+- Associar cada colocação da classificação a um tema ou trabalho de uma lista.
 - Peso por participante, para quem ainda não apresentou entrar com chance maior.
 - Exportar e importar a turma em arquivo, para reaproveitar entre disciplinas.
 - Link compartilhável com a lista codificada na URL, mantendo tudo estático.
