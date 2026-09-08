@@ -11,6 +11,34 @@ export default function SettingsModal({ open, onClose, settings, onChange, onRes
     <Modal open={open} title="Configurações" subtitle="Tudo fica salvo neste navegador." onClose={onClose} size="lg">
       <div className="settings">
         <fieldset className="settings__group">
+          <legend>Tipo de sorteio</legend>
+          <div className="segmented" role="radiogroup" aria-label="Tipo de sorteio">
+            <button
+              type="button"
+              role="radio"
+              aria-checked={settings.format === 'single'}
+              className="segmented__item"
+              data-active={settings.format === 'single'}
+              onClick={() => set({ format: 'single' })}
+            >
+              Vencedor único
+              <small>um nome por vez</small>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={settings.format === 'ranking'}
+              className="segmented__item"
+              data-active={settings.format === 'ranking'}
+              onClick={() => set({ format: 'ranking' })}
+            >
+              Classificação
+              <small>do 1º ao último</small>
+            </button>
+          </div>
+        </fieldset>
+
+        <fieldset className="settings__group">
           <legend>Experiência</legend>
           <Switch
             id="cfg-som"

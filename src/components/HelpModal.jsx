@@ -18,8 +18,10 @@ export default function HelpModal({ open, onClose }) {
           uma vez. Vale nome, número, emoji, código ou combinação como “🚀 Grupo A”.
         </li>
         <li>
-          <strong>Escolha o clima.</strong> Em Configurações você troca o modo (game show, hacker, foguete, caos), o
-          tema e a duração.
+          <strong>Escolha o tipo.</strong> <em>Vencedor único</em> sorteia um nome por vez. <em>Classificação</em>{' '}
+          sorteia a ordem inteira de uma vez, do 1º ao último colocado — serve tanto para pódio de campeonato quanto
+          para definir a ordem das equipes num trabalho. O modo (game show, hacker, foguete, caos), o tema e a duração
+          ficam em Configurações.
         </li>
         <li>
           <strong>Aperte SORTEAR.</strong> O resultado é definido antes da animação, com{' '}
