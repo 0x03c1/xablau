@@ -5,6 +5,7 @@ import { pickRandom, randomFloat } from '../utils/random.js';
 import Confetti from './Confetti.jsx';
 
 const CHAOS_EMOJIS = ['🎲', '🔥', '🚀', '👀', '💥', '🤖', '🎯', '⚡', '🍀', '🧠', '🎉', '😳'];
+const MEDALS = ['🥇', '🥈', '🥉'];
 
 /** Faixa de lampadas do modo game show. */
 const Bulbs = memo(function Bulbs({ count = 18 }) {
@@ -95,6 +96,7 @@ export default function Stage({
   display,
   message,
   winner,
+  ranking,
   progress,
   pool,
   totalParticipants,
@@ -139,7 +141,28 @@ export default function Stage({
           </div>
         ) : null}
 
-        {phase === PHASES.RESULT && winner ? (
+        {phase === PHASES.RESULT && ranking && ranking.length > 0 ? (
+          <div className="ranking" role="group" aria-label="Classificação do sorteio">
+            <p className="ranking__kicker">CLASSIFICAÇÃO</p>
+            <ol className="ranking__list">
+              {ranking.map((item, index) => (
+                <li key={item.id} className="ranking__row" data-top={index < 3 ? 'true' : 'false'}>
+                  <span className="ranking__pos" aria-hidden="true">
+                    {MEDALS[index] || `${index + 1}º`}
+                  </span>
+                  <span className="ranking__name">
+                    {item.emoji ? <span className="ranking__emoji">{item.emoji}</span> : null}
+                    <span>{item.body}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            {message ? <p className="winner__joke">{message}</p> : null}
+            <button type="button" className="btn btn--ghost winner__again" onClick={onDrawAgain}>
+              Sortear de novo
+            </button>
+          </div>
+        ) : phase === PHASES.RESULT && winner ? (
           <div className="winner" role="group" aria-label="Resultado do sorteio">
             <p className="winner__crown" aria-hidden="true">
               {mode === 'rocket' ? '🚀' : mode === 'hacker' ? '⌁' : '👑'}
@@ -178,7 +201,13 @@ export default function Stage({
       </div>
 
       <p className="visually-hidden" role="status" aria-live="polite">
-        {phase === PHASES.RESULT && winner ? `Sorteado: ${winner.label}` : ''}
+        {phase !== PHASES.RESULT
+          ? ''
+          : ranking && ranking.length > 0
+            ? `Classificação: ${ranking.map((item, i) => `${i + 1}º ${item.label}`).join(', ')}`
+            : winner
+              ? `Sorteado: ${winner.label}`
+              : ''}
       </p>
     </section>
   );
